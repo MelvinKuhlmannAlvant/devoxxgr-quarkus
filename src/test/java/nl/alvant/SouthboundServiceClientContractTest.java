@@ -6,7 +6,6 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.V4Pact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -16,13 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 @ExtendWith({PactConsumerTestExt.class})
 @PactTestFor(port = "8085")
-public class SouthboundResourceContractTest {
+public class SouthboundServiceClientContractTest {
 
-    @Pact(consumer = "SouthboundResource")
+    @Pact(consumer = "SouthboundServiceClient", provider = "GreetingResource")
     public V4Pact getSouthboundGreetingPact(PactDslWithProvider builder) {
         return builder
                 .uponReceiving("get southbound greeting")
-                .path("/southbound")
+                .path("/greeting")
                 .method("GET")
                 .willRespondWith()
                 .status(200)
@@ -36,7 +35,7 @@ public class SouthboundResourceContractTest {
         var response = given()
                 .body("")
                 .when()
-                .get("http://localhost:8085/southbound")
+                .get("http://localhost:8085/greeting")
                 .then()
                 .statusCode(200)
                 .extract()
